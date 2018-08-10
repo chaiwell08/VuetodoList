@@ -33,12 +33,25 @@
         }
         .add {
             text-align: center;
+            position:relative;
+        }
+        .add>input{
+            position:absolute;
+            top:0;
+            right:0;
+            
+        }
+        .add>button{
+            position:absolute;
+            top:0;
+            right:0;
+            z-index: 100;
         }
         .list {
             width: 100%;
             height: 45px;
             background: #186eca;
-            margin-top: 20px;
+            margin-top: 34px;
         }
         .listTask {
             font-size: 20px;
@@ -116,7 +129,7 @@
     </div>
     <div id="app" class="content">
         <div class="add">
-            <input type="text" v-model='value' @keyup.enter='doAdd' class="form-control col-lg-4">
+            <input type="text" v-model.trim='value' @keyup.enter='doAdd' class="form-control col-lg-2">
             <button @click='doAdd' class="btn btn-primary">添加任务</button>
         </div>
         <div class="list">
@@ -196,33 +209,43 @@
 
         },
         methods : {
+            // 添加一条任务
             doAdd() {
                 let obj = {
                     content : this.value,
                     finished : false,
                     unfinished : true,
                 }
-                this.add.push(obj);
-                this.totalChange();
+                if(this.value){
+                    this.add.push(obj);
+                    this.totalChange();
+                    this.value='';
+                }
+               
             },
+            // 删除一条任务
             daDelete(index) {
                 this.add.splice(index, 1);
                 this.totalChange();
             },
+            // 全部，未完成，已完成切换逻辑
             tab(index) {
                 this.isActive = index;
                 this.number = index;
             },
+            // 已完成按钮点击逻辑
             doFinished(index) {
                 this.add[index].unfinished = true;
                 this.add[index].finished = false;
                 this.totalChange();  
             },
+            // 未完成按钮逻辑
             doUnfinished(index) {
                 this.add[index].unfinished = false;
                 this.add[index].finished = true;
                 this.totalChange();
             },
+            // 事件计数逻辑
             totalChange() {
                 this.total = this.add.length;
                 this.finished = this.add.filter((item)=>{
